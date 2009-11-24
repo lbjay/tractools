@@ -1,20 +1,9 @@
 #!/usr/bin/python
 import os
+import sys
 import re
 import shutil
 
-def main(old_dir, new_dir, data_dir=None):
-    names = os.listdir(old_dir)
-    names.sort()
-    for name in names:
-        if name[-4:] == ".txt":
-            topic = name[:-4]
-            print topic
-
-            txt = file(os.path.join(old_dir, name)).read()
-            makePage(new_dir, topic, twiki2moin(txt))
-            if data_dir:
-                copyAttachments(new_dir, data_dir, topic, txt)
 
 def twiki2moin(txt):
     # remove lines starting and ending with %
@@ -92,6 +81,23 @@ def copyAttachments(new_dir, data_dir, topic, txt):
             pass
 
 if __name__ == '__main__':
-    main("/proj/adsset/twiki/data/ADS", "./moin", "/proj/adsset/twiki/pub/ADS")
+    source = sys.argv[1]
+    dest = sys.argv[2]
+    datadir = sys.argv[3]
+    source_topics = sys.argv[4:]
+    names = os.listdir(source)
+
+    topics = [ x[:-4] for x in names if name[-4:] == '.txt' ]
+    
+    if len(source_topics):
+        topics = [x for x in topics if x in source_topics]
+
+    topics.sort()
+    for t in topics:
+        print t
+
+        txt = file(os.path.join(source, topic + '.txt')).read()
+        makePage(dest, t, twiki2moin(txt))
+        copyAttachments(dest, source, t, txt)
 
 
